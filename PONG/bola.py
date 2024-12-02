@@ -1,9 +1,9 @@
 class Bola:
-    def __init__(self, x, y):
+    def __init__(self, x, y, velocidade_x, velocidade_y):
         self.x = x
         self.y = y
-        self.velocidade_x = 1
-        self.velocidade_y = 1
+        self.velocidade_x = velocidade_x
+        self.velocidade_y = velocidade_y
 
     def mover(self):
         """Move a bola de acordo com sua velocidade"""

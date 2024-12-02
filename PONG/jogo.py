@@ -13,7 +13,7 @@ class Jogo:
         # Objetos principais
         self.raquete1 = Raquete(0, self.altura // 2 - 1)
         self.raquete2 = Raquete(self.largura - 1, self.altura // 2 - 1)
-        self.bola = Bola(self.largura // 2, self.altura // 2)
+        self.bola = Bola(self.largura // 2, self.altura // 2, 2, 1)
         self.parede = Parede(0, 0, self.largura, self.altura)
 
         # Jogadores
@@ -25,6 +25,7 @@ class Jogo:
         """Atualiza as posições e verifica as colisões"""
         # Movimenta a bola
         self.bola.mover()
+        self.raquete1.mover(input('tecla: ').lower())
 
         # Verifica colisões com as raquetes
         self.bola.checar_colisao(self.raquete1)
@@ -42,10 +43,10 @@ class Jogo:
             self.bola.resetar()
     def desenhar_inicio(self):
         """Desenha a estrutura fixa no terminal"""
-        os.system('cls' if os.name == 'nt' else 'clear')  # Limpa a tela ao iniciar
+        os.system('cls')  # Limpa a tela ao iniciar
         
         print("###########################################################")
-        print("# Jogo de Pong (em modo console)                 #")
+        print("# Jogo de Pong (em modo console)                          #")
         print("###########################################################")
         print("Bola - Posição: (x, y)                                  ")
         print("Raquete 1 - Posição: (x, y)                              ")
@@ -56,15 +57,15 @@ class Jogo:
     def desenhar(self):
         """Atualiza apenas os valores no terminal"""
         # Limpa a tela novamente para atualizar a interface
-        os.system('cls' if os.name == 'nt' else 'clear')  # Limpa a tela
+        os.system('cls')  # Limpa a tela
 
         # Desenha a estrutura fixa
         print("###########################################################")
-        print("# Jogo de Pong (em modo console)                 #")
+        print("# Jogo de Pong (em modo console)                          #")
         print("###########################################################")
         
         # Atualiza as coordenadas da bola
-        print(f"Bola - Posição: (x = {self.bola.x}, y = {self.bola.y})")
+        print(f"Bola - Posição: (x = {self.bola.x:.2f}, y = {self.bola.y})")
 
         # Atualiza as posições das raquetes
         print(f"Raquete 1 - Posição: (x = {self.raquete1.x}, y = {self.raquete1.y})")
