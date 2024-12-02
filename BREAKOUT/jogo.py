@@ -6,32 +6,44 @@ from parede import Parede
 from jogador import Jogador
 
 class Jogo:
-    def __init__(self, modo="pong"):
+    def __init__(self):
         self.largura = 20
         self.altura = 10
-        self.modo = modo  # Pode ser 'pong' ou 'breakout'
-        
+        self.vel_x_bola = 5
+        self.vel_y_bola = 5
+
         # Objetos principais
         self.raquete1 = Raquete(0, self.altura // 2 - 1)
-        self.raquete2 = Raquete(self.largura - 1, self.altura // 2 - 1)
-        self.bola = Bola(self.largura // 2, self.altura // 2)
+        self.bola = Bola(self.largura // 2, self.altura // 2,self.vel_x_bola,self.vel_y_bola)
         self.parede = Parede(0, 0, self.largura, self.altura)
 
         # Jogadores
         self.jogador1 = Jogador("Jogador 1")
-        self.jogador2 = Jogador("Jogador 2")
 
         # Blocos para o Breakout
-        if self.modo == "breakout":
-            self.criar_blocos()
+        self.blocos = []
+
+
 
     def criar_blocos(self):
         """Cria blocos para o modo Breakout"""
-        self.blocos = []
         for i in range(5):
             for j in range(2):
                 bloco = Parede(i + 5, j + 2, 1, 1)
                 self.blocos.append(bloco)
+
+    def checar_colisao(self, raquete):
+        """Verifica a colisão da bola com a raquete"""
+        if self.bola.x == self.raquete1.x and self.bola.y == self.raquete1.y :
+            self.vel_x_bola *= -1
+
+    def checar_colisao_com_parede(self, parede):
+        """Verifica a colisão da bola com as paredes"""
+        if self.y <= 0 or self.y >= parede.altura - 1:
+            self.velocidade_y *= -1
+        else:
+            vel_x_bola = 5
+            vel_y_bola = 5
 
     def atualizar(self):
         """Atualiza as posições e verifica as colisões"""
@@ -39,23 +51,14 @@ class Jogo:
         self.bola.mover()
 
         # Verifica colisões com as raquetes
-        self.bola.checar_colisao(self.raquete1)
-        self.bola.checar_colisao(self.raquete2)
+        self.checar_colisao(self.raquete1)
 
         # Verifica colisões com as paredes
-        self.bola.checar_colisao_com_parede(self.parede)
+        self.checar_colisao_com_parede(self.parede)
 
         # Se estiver no modo Breakout, verificar colisões com os blocos
-        if self.modo == "breakout":
-            self.checar_colisao_com_blocos()
+        self.checar_colisao_com_blocos()
 
-        # Verifica se a bola saiu da tela
-        if self.bola.x < 0:
-            self.jogador2.aumentar_pontuacao()
-            self.bola.resetar()
-        elif self.bola.x >= self.largura:
-            self.jogador1.aumentar_pontuacao()
-            self.bola.resetar()
 
     def checar_colisao_com_blocos(self):
         """Verifica a colisão da bola com os blocos"""
@@ -66,41 +69,34 @@ class Jogo:
                 self.blocos.remove(bloco)
                 break
 
-    def desenhar(self):
-        """Desenha todos os elementos no console"""
-        os.system('cls' if os.name == 'nt' else 'clear')  # Limpa a tela do console
-        
-        # Cria uma matriz para representar a tela
-        tela = [[' ' for _ in range(self.largura)] for _ in range(self.altura)]
+    def desenhar(self) :
+        """Atualiza apenas os valores no terminal"""
+        # Limpa a tela novamente para atualizar a interface
+        os.system('cls' if os.name == 'nt' else 'clear')  # Limpa a tela
 
-        # Desenha as raquetes
-        for y in range(self.raquete1.y, self.raquete1.y + 3):
-            if 0 <= y < self.altura:
-                tela[y][self.raquete1.x] = '|'
-        for y in range(self.raquete2.y, self.raquete2.y + 3):
-            if 0 <= y < self.altura:
-                tela[y][self.raquete2.x] = '|'
+        # Desenha a estrutura fixa
+        print("###########################################################")
+        print("# Jogo de Pong (em modo console)                 #")
+        print("###########################################################")
 
-        # Desenha a bola
-        if 0 <= self.bola.y < self.altura and 0 <= self.bola.x < self.largura:
-            tela[self.bola.y][self.bola.x] = 'O'
+        # Atualiza as coordenadas da bola
+        print(f"Bola - Posição: (x = {self.bola.x}, y = {self.bola.y})")
 
-        # Desenha os blocos (apenas no modo Breakout)
-        if self.modo == "breakout":
-            for bloco in self.blocos:
-                if 0 <= bloco.y < self.altura and 0 <= bloco.x < self.largura:
-                    tela[bloco.y][bloco.x] = '#'
-
-        # Exibe a tela
-        for linha in tela:
-            print(''.join(linha))
+        # Atualiza as posições das raquetes
+        print(f"Raquete 1 - Posição: (x = {self.raquete1.x}, y = {self.raquete1.y})")
 
         # Exibe a pontuação
-        print(f"Pontuação: {self.jogador1.pontuacao} - {self.jogador2.pontuacao}")
+        print(f"Pontuação: {self.jogador1.pontuacao}")
 
-    def rodar(self):
+        print("###########################################################")
+
+
+    def rodar(self) :
         """Loop principal do jogo"""
-        while True:
+        while True :
+            self.criar_blocos()
             self.atualizar()
             self.desenhar()
-            time.sleep(0.1)  # Delay para visualização do movimento
+            time.sleep(1.5)  # Delay para visualização do movimento
+
+
